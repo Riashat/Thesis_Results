@@ -35,11 +35,11 @@ nb_conv = 3
 
 score=0
 all_accuracy = 0
-acquisition_iterations = 10
+acquisition_iterations = 190
 
 #use a large number of dropout iterations
 dropout_iterations = 100
-Queries = 100
+Queries = 5
 
 
 Experiments_All_Accuracy = np.zeros(shape=(acquisition_iterations+1))
@@ -192,9 +192,9 @@ for e in range(Experiments):
 	Valid_Loss = np.asarray(Train_Result_Optimizer.get('val_loss'))
 	Valid_Loss = np.asarray([Valid_Loss]).T
 	Train_Acc = np.asarray(Train_Result_Optimizer.get('acc'))
-	Train_Acc = np.array([Train_Loss]).T
+	Train_Acc = np.array([Train_Acc]).T
 	Valid_Acc = np.asarray(Train_Result_Optimizer.get('val_acc'))
-	Valid_Acc = np.asarray([Valid_Loss]).T
+	Valid_Acc = np.asarray([Valid_Acc]).T
 
 
 	Pool_Train_Loss = Train_Loss
@@ -313,9 +313,9 @@ for e in range(Experiments):
 		Valid_Loss = np.asarray(Train_Result_Optimizer.get('val_loss'))
 		Valid_Loss = np.asarray([Valid_Loss]).T
 		Train_Acc = np.asarray(Train_Result_Optimizer.get('acc'))
-		Train_Acc = np.array([Train_Loss]).T
+		Train_Acc = np.array([Train_Acc]).T
 		Valid_Acc = np.asarray(Train_Result_Optimizer.get('val_acc'))
-		Valid_Acc = np.asarray([Valid_Loss]).T
+		Valid_Acc = np.asarray([Valid_Acc]).T
 
 		#Accumulate the training and validation/test loss after every pooling iteration - for plotting
 		Pool_Valid_Loss = np.append(Pool_Valid_Loss, Valid_Loss, axis=1)
@@ -340,18 +340,18 @@ for e in range(Experiments):
 
 
 	print('Saving Results Per Experiment')
-	np.save(''+'Subset_2nd_Train_Loss_'+ 'Experiment_' + str(e) + '.npy', Pool_Train_Loss)
-	np.save(''+ 'Subset_2nd_Valid_Loss_'+ 'Experiment_' + str(e) + '.npy', Pool_Valid_Loss)
-	np.save(''+'Subset_2nd_Train_Loss_'+ 'Experiment_' + str(e) + '.npy', Pool_Train_Acc)
-	np.save(''+ 'Subset_2nd_Valid_Loss_'+ 'Experiment_' + str(e) + '.npy', Pool_Valid_Acc)
-	np.save(''+'Subset_2nd_Pooled_Image_Index_'+ 'Experiment_' + str(e) + '.npy', x_pool_All)
-	np.save(''+ 'Subset_2nd_Accuracy_Results_'+ 'Experiment_' + str(e) + '.npy', all_accuracy)
+	np.save(''+'Main_Train_Loss_'+ 'Experiment_' + str(e) + '.npy', Pool_Train_Loss)
+	np.save(''+ 'Main_Valid_Loss_'+ 'Experiment_' + str(e) + '.npy', Pool_Valid_Loss)
+	np.save(''+'Main_Train_Acc_'+ 'Experiment_' + str(e) + '.npy', Pool_Train_Acc)
+	np.save(''+ 'Main_2nd_Valid_Acc_'+ 'Experiment_' + str(e) + '.npy', Pool_Valid_Acc)
+	np.save(''+'Main_Pooled_Image_Index_'+ 'Experiment_' + str(e) + '.npy', x_pool_All)
+	np.save(''+ 'Main_2nd_Accuracy_Results_'+ 'Experiment_' + str(e) + '.npy', all_accuracy)
 
 print('Saving Average Accuracy Over Experiments')
 
 Average_Accuracy = np.divide(Experiments_All_Accuracy, Experiments)
 
-np.save(''+'Subset_2nd_Average_Accuracy'+'.npy', Average_Accuracy)
+np.save(''+'Main_Average_Accuracy'+'.npy', Average_Accuracy)
 
 
 
