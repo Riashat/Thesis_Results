@@ -35,11 +35,11 @@ nb_conv = 3
 
 score=0
 all_accuracy = 0
-acquisition_iterations = 95
+acquisition_iterations = 50
 
 #use a large number of dropout iterations
 dropout_iterations = 100
-Queries = 10
+Queries = 1
 
 
 Experiments_All_Accuracy = np.zeros(shape=(acquisition_iterations+1))
