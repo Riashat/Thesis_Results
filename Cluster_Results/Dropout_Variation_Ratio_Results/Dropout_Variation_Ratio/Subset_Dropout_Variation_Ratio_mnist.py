@@ -35,11 +35,11 @@ nb_conv = 3
 
 score=0
 all_accuracy = 0
-acquisition_iterations = 50
+acquisition_iterations = 16
 
 #use a large number of dropout iterations
 dropout_iterations = 100
-Queries = 1
+Queries = 5
 
 
 Experiments_All_Accuracy = np.zeros(shape=(acquisition_iterations+1))
@@ -73,52 +73,52 @@ for e in range(Experiments):
 
 	#training data to have equal distribution of classes
 	idx_0 = np.array( np.where(y_train_All==0)  ).T
-	idx_0 = idx_0[0:5,0]
+	idx_0 = idx_0[0:2,0]
 	X_0 = X_train_All[idx_0, :, :, :]
 	y_0 = y_train_All[idx_0]
 
 	idx_1 = np.array( np.where(y_train_All==1)  ).T
-	idx_1 = idx_1[0:5,0]
+	idx_1 = idx_1[0:2,0]
 	X_1 = X_train_All[idx_1, :, :, :]
 	y_1 = y_train_All[idx_1]
 
 	idx_2 = np.array( np.where(y_train_All==2)  ).T
-	idx_2 = idx_2[0:5,0]
+	idx_2 = idx_2[0:2,0]
 	X_2 = X_train_All[idx_2, :, :, :]
 	y_2 = y_train_All[idx_2]
 
 	idx_3 = np.array( np.where(y_train_All==3)  ).T
-	idx_3 = idx_3[0:5,0]
+	idx_3 = idx_3[0:2,0]
 	X_3 = X_train_All[idx_3, :, :, :]
 	y_3 = y_train_All[idx_3]
 
 	idx_4 = np.array( np.where(y_train_All==4)  ).T
-	idx_4 = idx_4[0:5,0]
+	idx_4 = idx_4[0:2,0]
 	X_4 = X_train_All[idx_4, :, :, :]
 	y_4 = y_train_All[idx_4]
 
 	idx_5 = np.array( np.where(y_train_All==5)  ).T
-	idx_5 = idx_5[0:5,0]
+	idx_5 = idx_5[0:2,0]
 	X_5 = X_train_All[idx_5, :, :, :]
 	y_5 = y_train_All[idx_5]
 
 	idx_6 = np.array( np.where(y_train_All==6)  ).T
-	idx_6 = idx_6[0:5,0]
+	idx_6 = idx_6[0:2,0]
 	X_6 = X_train_All[idx_6, :, :, :]
 	y_6 = y_train_All[idx_6]
 
 	idx_7 = np.array( np.where(y_train_All==7)  ).T
-	idx_7 = idx_7[0:5,0]
+	idx_7 = idx_7[0:2,0]
 	X_7 = X_train_All[idx_7, :, :, :]
 	y_7 = y_train_All[idx_7]
 
 	idx_8 = np.array( np.where(y_train_All==8)  ).T
-	idx_8 = idx_8[0:5,0]
+	idx_8 = idx_8[0:2,0]
 	X_8 = X_train_All[idx_8, :, :, :]
 	y_8 = y_train_All[idx_8]
 
 	idx_9 = np.array( np.where(y_train_All==9)  ).T
-	idx_9 = idx_9[0:5,0]
+	idx_9 = idx_9[0:2,0]
 	X_9 = X_train_All[idx_9, :, :, :]
 	y_9 = y_train_All[idx_9]
 
@@ -174,7 +174,7 @@ for e in range(Experiments):
 	model.add(MaxPooling2D(pool_size=(nb_pool, nb_pool)))
 	model.add(Dropout(0.25))
 
-	c = 1
+	c = 0.5
 	Weight_Decay = c / float(X_train.shape[0])
 	model.add(Flatten())
 	model.add(Dense(128, W_regularizer=l2(Weight_Decay)))
@@ -185,7 +185,7 @@ for e in range(Experiments):
 
 
 	model.compile(loss='categorical_crossentropy', optimizer='adam')
-	hist = model.fit(X_train, Y_train, batch_size=batch_size, nb_epoch=nb_epoch, show_accuracy=True, verbose=1, validation_data=(X_valid, Y_valid))
+	hist = model.fit(X_train, Y_train, batch_size=batch_size, nb_epoch=nb_epoch, show_accuracy=True, verbose=0, validation_data=(X_valid, Y_valid))
 	Train_Result_Optimizer = hist.history
 	Train_Loss = np.asarray(Train_Result_Optimizer.get('loss'))
 	Train_Loss = np.array([Train_Loss]).T
@@ -217,7 +217,7 @@ for e in range(Experiments):
 	for i in range(acquisition_iterations):
 		print('POOLING ITERATION', i)
 
-		pool_subset = 2000
+		pool_subset = 1000
 		pool_subset_dropout = np.asarray(random.sample(range(0,X_Pool.shape[0]), pool_subset))
 		X_Pool_Dropout = X_Pool[pool_subset_dropout, :, :, :]
 		y_Pool_Dropout = y_Pool[pool_subset_dropout]
@@ -227,7 +227,7 @@ for e in range(Experiments):
 
 		for d in range(dropout_iterations):
 			print ('Dropout Iteration', d)
-			dropout_classes = model.predict_classes_stochastic(X_Pool_Dropout,batch_size=batch_size, verbose=1)
+			dropout_classes = model.predict_classes_stochastic(X_Pool_Dropout,batch_size=batch_size, verbose=0)
 			dropout_classes = np.array([dropout_classes]).T
 			#np.save('/Users/Riashat/Documents/Cambridge_THESIS/Code/Experiments/keras/active_learning/Acquisition_Functions/BCNN_Maximal_Uncertainty/Variation_Ratio/Dropout_Scores/'+'Dropout_Score_'+str(d)+'.npy',dropout_classes)
 			All_Dropout_Classes = np.append(All_Dropout_Classes, dropout_classes, axis=1)
@@ -295,7 +295,7 @@ for e in range(Experiments):
 		model.add(Dropout(0.25))
 
 
-		c = 1
+		c = 0.5
 		Weight_Decay = c / float(X_train.shape[0])
 		model.add(Flatten())
 		model.add(Dense(128, W_regularizer=l2(Weight_Decay)))
@@ -306,7 +306,7 @@ for e in range(Experiments):
 
 
 		model.compile(loss='categorical_crossentropy', optimizer='adam')
-		hist = model.fit(X_train, Y_train, batch_size=batch_size, nb_epoch=nb_epoch, show_accuracy=True, verbose=1, validation_data=(X_valid, Y_valid))
+		hist = model.fit(X_train, Y_train, batch_size=batch_size, nb_epoch=nb_epoch, show_accuracy=True, verbose=0, validation_data=(X_valid, Y_valid))
 		Train_Result_Optimizer = hist.history
 		Train_Loss = np.asarray(Train_Result_Optimizer.get('loss'))
 		Train_Loss = np.array([Train_Loss]).T
@@ -340,18 +340,18 @@ for e in range(Experiments):
 
 
 	print('Saving Results Per Experiment')
-	np.save(''+'Subset_1st_Train_Loss_'+ 'Experiment_' + str(e) + '.npy', Pool_Train_Loss)
-	np.save(''+ 'Subset_1st_Valid_Loss_'+ 'Experiment_' + str(e) + '.npy', Pool_Valid_Loss)
-	np.save(''+'Subset_1st_Train_Acc_'+ 'Experiment_' + str(e) + '.npy', Pool_Train_Acc)
-	np.save(''+ 'Subset_1st_Valid_Acc_'+ 'Experiment_' + str(e) + '.npy', Pool_Valid_Acc)
-	np.save(''+'Subset_1st_Pooled_Image_Index_'+ 'Experiment_' + str(e) + '.npy', x_pool_All)
-	np.save(''+ 'Subset_1st_Accuracy_Results_'+ 'Experiment_' + str(e) + '.npy', all_accuracy)
+	np.save(''+'Main_Train_Loss_'+ 'Experiment_' + str(e) + '.npy', Pool_Train_Loss)
+	np.save(''+ 'Main_Valid_Loss_'+ 'Experiment_' + str(e) + '.npy', Pool_Valid_Loss)
+	np.save(''+'Main_Train_Acc_'+ 'Experiment_' + str(e) + '.npy', Pool_Train_Acc)
+	np.save(''+ 'Main_Valid_Acc_'+ 'Experiment_' + str(e) + '.npy', Pool_Valid_Acc)
+	np.save(''+'Main_Pooled_Image_Index_'+ 'Experiment_' + str(e) + '.npy', x_pool_All)
+	np.save(''+ 'Main_Accuracy_Results_'+ 'Experiment_' + str(e) + '.npy', all_accuracy)
 
 print('Saving Average Accuracy Over Experiments')
 
 Average_Accuracy = np.divide(Experiments_All_Accuracy, Experiments)
 
-np.save(''+'Subset_1st_Average_Accuracy'+'.npy', Average_Accuracy)
+np.save(''+'Main_Average_Accuracy'+'.npy', Average_Accuracy)
 
 
 
